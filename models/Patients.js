@@ -6,6 +6,10 @@ const patientSchema = new Schema({
   other_name: { type: String },
   email: { type: String },
   phone_number: { type: String },
+  address: { type: String },
+  occupation: { type: String },
+  relationship: { type: String },
+  age: { type: String },
   sex: { type: String },
   dob: { type: String },
   educational_status: { type: String },
@@ -17,7 +21,14 @@ const patientSchema = new Schema({
   location: { type: String },
   patient_id: { type: String },
   date_enrolled: { type: String },
+  care_entry_point: { type: String },
+  date_of_confirmed_HIV_test: { type: String },
+  mode_of_HIV_test: { type: String },
+  where: { type: String },
+  prior_ART: { type: String },
+  date_transferred_in: { type: String },
+  facility_transferred_from: { type: String },
+  appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
   otp: { type: String },
 });
-
 module.exports = mongoose.model("Patient", patientSchema);
