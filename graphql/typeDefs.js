@@ -31,12 +31,24 @@ module.exports = gql`
     date_transferred_in: String!
     facility_transferred_from: String!
     otp: String!
+    appointments: [ID!]!
+    token: String!
   }
-  input registerPatient {
+  type Front_Desk_Officer {
+    id: ID!
+    first_name: String!
+    last_name: String!
+    username: String!
+    email: String!
+    phone_number: String!
+    user_type: String!
+    user_role: String!
+    appointments: [ID!]!
+  }
+  input register_Patient {
     first_name: String!
     last_name: String!
     other_name: String!
-
     email: String!
     phone_number: String!
     address: String!
@@ -65,6 +77,9 @@ module.exports = gql`
   }
   type Query {
     getPatients: [Patient]
+    get_FDO: [Front_Desk_Officer]
+    get_appointments: [Appointment]
+    get_appointments_by_id(id: ID!): [Appointment]
   }
   input Register_Super_Admin {
     first_name: String!
@@ -116,21 +131,46 @@ module.exports = gql`
     user_role: String!
     message: String!
   }
+  type Appointment {
+    id: ID!
+    doctor: String!
+    by: [ID]!
+    time: String!
+    date: String!
+    body: String!
+  }
+
+  # Mutations
 
   type Mutation {
-    register_patient(registerPatient: registerPatient): Patient!
+    register_patient(register_Patient: register_Patient): Patient!
     register_super_admin(register_Super_Admin: Register_Super_Admin): Status!
     register_doctor(Register_Doctor: Register_Doctor): Status!
     register_front_desk_officer(
       Register_Front_Desk_Officer: Register_Doctor
     ): Status!
-    patient_login(
-      phone_number: String!
-      otp: String!
-      patient_id: ID!
-    ): Patient!
+    patient_login(clinic_name: String!, otp: String!, patient_id: ID!): Patient!
     super_admin_login(email: String!, password: String!): Admin!
     doctor_login(email: String!, password: String!): Admin
     front_desk_officer_login(email: String!, password: String!): Admin!
+    create_fdo_Appointment(
+      fdo_id: ID!
+      body: String!
+      time: String!
+      doctor: String!
+    ): Appointment!
+    create_patient_Appointment(
+      patient_id: ID!
+      body: String!
+      time: String!
+      doctor: String!
+    ): Appointment!
+    update_appointment(
+      appointment_id: ID!
+      body: String!
+      time: String!
+      doctor: String!
+    ): Appointment!
+    delete_appointment(appointment_id: ID!): Appointment!
   }
 `;

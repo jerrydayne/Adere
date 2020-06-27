@@ -21,6 +21,7 @@ const front_desk_officer_schema = new Schema({
     type: Date,
     default: Date.now(),
   },
+  appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
 });
 
 module.exports = mongoose.model(

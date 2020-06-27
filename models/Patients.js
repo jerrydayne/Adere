@@ -28,6 +28,7 @@ const patientSchema = new Schema({
   prior_ART: { type: String },
   date_transferred_in: { type: String },
   facility_transferred_from: { type: String },
+  appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
   otp: { type: String },
 });
 module.exports = mongoose.model("Patient", patientSchema);

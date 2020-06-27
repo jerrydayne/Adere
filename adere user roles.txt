@@ -1,8 +1,0 @@
-USER ROLES 
-Hiv Patients
-Doctor - set status, create patients
-Pharmacy
-lab
-front Desk office - Register patient, book appointment, search all patient records, assign doctor/rescheduling
-admin - Create, Read, Update
-super admin - Create, Read, Update, Set status

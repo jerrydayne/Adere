@@ -1,6 +1,6 @@
 const Patients = require("../../models/Patients");
 const check_auth = require("../../utils/authorization");
-
+const Appointment = require("../../models/Appointment");
 const {
   validateUserInput,
   validateLoginInput,
@@ -8,36 +8,22 @@ const {
 const { UserInputError, AuthenticationError } = require("apollo-server");
 const { MY_SECRET } = require("../../configs/jwt");
 const jwt = require("jsonwebtoken");
-// function generateToken(patient) {
-//   return jwt.sign(
-//     {
-//       id: patient.id,
-//       phone_number: patient.phone_number,
-//       otp: patient.otp,
-//     },
-//     MY_SECRET,
-//     { expiresIn: "1h" }
-//   );
-// }
-module.exports = {
-  Query: {
-    async getPatients() {
-      try {
-        const patients = await Patients.find();
-        if (!patients) {
-          throw new Error("user not found");
-        }
-        return patients;
-      } catch (err) {
-        throw new Error(err);
-      }
+function generateToken(patient) {
+  return jwt.sign(
+    {
+      id: patient.id,
     },
-  },
+    MY_SECRET,
+    { expiresIn: "1h" }
+  );
+}
+module.exports = {
+  Query: {},
   Mutation: {
     async register_patient(
       _,
       {
-        registerPatient: {
+        register_Patient: {
           first_name,
           last_name,
           other_name,
@@ -157,10 +143,10 @@ module.exports = {
       }
     },
 
-    async patient_login(_, { phone_number, otp, patient_id }, context) {
+    async patient_login(_, { clinic_name, otp, patient_id }, context) {
       // TODO validate input
       const { valid, errors } = validateLoginInput(
-        phone_number,
+        clinic_name,
         otp,
         patient_id
       );
@@ -177,13 +163,59 @@ module.exports = {
         if (patient.otp !== otp) {
           throw new UserInputError("otp do not match");
         }
-        if (patient.phone_number !== phone_number) {
-          throw new UserInputError("Phone number do not match any users'");
+        if (patient.clinic_name !== clinic_name) {
+          throw new UserInputError("Clinic not found'");
         }
-
+        const token = generateToken(patient);
         return {
           ...patient._doc,
           id: patient._id,
+          token,
+        };
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    async create_patient_Appointment(
+      _,
+      { patient_id, body, time, doctor },
+      context
+    ) {
+      const user = check_auth(context);
+      try {
+        if (patient_id.trim() === "") {
+          throw new UserInputError(
+            " you are not authorized, provide a valid id"
+          );
+        }
+        if (body.trim() === "") {
+          throw new UserInputError("Appointment body cannot be empty ");
+        }
+        if (time.trim() === "") {
+          throw new UserInputError(" time not provided, try again");
+        }
+
+        const patient = await Patients.findOne({ _id: patient_id });
+        if (!patient) {
+          throw new UserInputError(
+            "You are not authorized to create appointment"
+          );
+        }
+        const new_appointment = new Appointment({
+          body,
+          time,
+          doctor,
+          //   by: user.id,
+        });
+        new_appointment.by[1] = user.id;
+        const appointment = await new_appointment.save();
+        patient.appointments.unshift(appointment._id);
+        const patient_res = await patient.save();
+
+        return {
+          message: "Appointment created successfully!",
+          id: appointment._id,
+          ...appointment._doc,
         };
       } catch (err) {
         throw new Error(err);

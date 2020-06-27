@@ -2,18 +2,18 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const appointment_schema = new Schema({
-  time: { String },
+  time: { type: String },
   date: {
     type: Date,
     default: Date.now(),
   },
-  by: {
-    type: Schema.Types.ObjectId,
-    ref: "Patient",
-  },
-  to: {
-    type: Schema.Types.ObjectId,
-    ref: "Doctor",
+  body: { type: String },
+  by: [
+    { type: Schema.Types.ObjectId, ref: "Front_Desk_Officer" },
+    { type: Schema.Types.ObjectId, ref: "Patients" },
+  ],
+  doctor: {
+    type: String,
   },
 });
 
