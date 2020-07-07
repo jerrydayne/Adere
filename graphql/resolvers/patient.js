@@ -1,6 +1,5 @@
 const Patients = require("../../models/Patients");
 const check_auth = require("../../utils/authorization");
-const Appointment = require("../../models/Appointment");
 const {
   validateUserInput,
   validateLoginInput,
@@ -171,51 +170,6 @@ module.exports = {
           ...patient._doc,
           id: patient._id,
           token,
-        };
-      } catch (err) {
-        throw new Error(err);
-      }
-    },
-    async create_patient_Appointment(
-      _,
-      { patient_id, body, time, doctor },
-      context
-    ) {
-      const user = check_auth(context);
-      try {
-        if (patient_id.trim() === "") {
-          throw new UserInputError(
-            " you are not authorized, provide a valid id"
-          );
-        }
-        if (body.trim() === "") {
-          throw new UserInputError("Appointment body cannot be empty ");
-        }
-        if (time.trim() === "") {
-          throw new UserInputError(" time not provided, try again");
-        }
-
-        const patient = await Patients.findOne({ _id: patient_id });
-        if (!patient) {
-          throw new UserInputError(
-            "You are not authorized to create appointment"
-          );
-        }
-        const new_appointment = new Appointment({
-          body,
-          time,
-          doctor,
-          //   by: user.id,
-        });
-        new_appointment.by[1] = user.id;
-        const appointment = await new_appointment.save();
-        patient.appointments.unshift(appointment._id);
-        const patient_res = await patient.save();
-
-        return {
-          message: "Appointment created successfully!",
-          id: appointment._id,
-          ...appointment._doc,
         };
       } catch (err) {
         throw new Error(err);

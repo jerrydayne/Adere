@@ -147,7 +147,6 @@ module.exports = {
   validateAdminInput: (
     first_name,
     last_name,
-    username,
     email,
     phone_number,
     password,
@@ -160,9 +159,7 @@ module.exports = {
     if (first_name.trim() === "") {
       errors.first_name = " firstname cannot be empty";
     }
-    if (username.trim() === "") {
-      errors.username = " username cannot be empty";
-    }
+
     if (email.trim() === "") {
       errors.email = " email cannot be empty";
     } else {

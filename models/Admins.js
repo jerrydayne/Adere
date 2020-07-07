@@ -15,6 +15,12 @@ const admin_schema = new Schema({
     unique: true,
   },
   password: { type: String },
+  created_appointment: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Appointment",
+    },
+  ],
   user_type: { type: String },
   user_role: { type: String },
   createdAt: {

@@ -12,7 +12,7 @@ Below are the breakdowns of the system user roles or permissions
 - Update
 - Set status
 
-## Admins [localhost:5000](#)
+## Admins 
 
 ### Front Desk office:
 

@@ -54,6 +54,9 @@ module.exports = {
             errors: { errors },
           });
         }
+        if (username.trim() === "") {
+          throw new UserInputError(" username cannot be empty");
+        }
         let existing_admin = await Super_Admin.findOne({ email });
         if (existing_admin) {
           throw new ApolloError("user existing with the email");
